@@ -1,7 +1,7 @@
 <template>
   <Navbar @otvori="otvoriZatvoriModal"/>
   <div v-if="prikaziModal">
-    <Modal @zatvori="otvoriZatvoriModal"/>
+    <Modal @zatvori="otvoriZatvoriModal" @potvrdi="handleFormSubmit"/>
   </div>
   <div class="position-relative">
   <img id="naslovna-slika" src="../../usluge/Naslovna.jpg" alt="Slika" />
@@ -16,8 +16,8 @@
   <div class="container mt-5">
     <div class="row">
       <div class="col-md-6 col-lg-3" v-for="usluga in Usluge" :key="usluga.id">
-        <div class="card my-3 shadow">
-          <img :src="BASE_URL + '/storage/' + usluga.image" class="img-fluid rounded" alt="Slika" />
+        <div class="card my-3 shadow slike-usluga">
+          <img :src="BASE_URL + '/storage/' + usluga.image" class="card-img-top rounded" alt="Slika" />
           <h3 class="mt-3">{{ usluga.title }}</h3>
           <p>{{ usluga.description }}</p>
         </div>
@@ -68,7 +68,24 @@ export default {
   methods: {
     otvoriZatvoriModal(){
       this.prikaziModal = !this.prikaziModal
-    }
+    },
+    handleFormSubmit(payload){
+      const logInFormData = new URLSearchParams();
+      logInFormData.append('email', payload.email);
+      logInFormData.append('password', payload.password);
+      const API_ENDPOINT2 = '/api/auth/login'
+      api.post(API_ENDPOINT2, logInFormData)
+      .then(response => {
+        // Uspješno sačuvano
+        const token = response.data.access_token;
+        localStorage.setItem('token', token);
+        this.$router.push('/user');
+      })
+      .catch(error => {
+        // Greška pri čuvanju
+        console.error(error.response.data.message);
+      });
+    },
   },
   mounted() {
     // Dohvatite podatke i postavite putanja kad se komponenta montira
@@ -152,4 +169,9 @@ ul {
   font-size: 26px;
   margin-bottom: 40px;
 }
+.slike-usluga .card-img-top {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+    }
 </style>

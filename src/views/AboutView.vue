@@ -2,7 +2,7 @@
   <div class="about">
     <Navbar @otvori="otvoriZatvoriModal"/>
     <div v-if="prikaziModal">
-      <Modal @zatvori="otvoriZatvoriModal"/>
+      <Modal @zatvori="otvoriZatvoriModal" @potvrdi="handleFormSubmit"/>
     </div>
     <div class="container my-4">
     <div class="row">
@@ -60,6 +60,23 @@ export default {
   methods: {
     otvoriZatvoriModal(){
       this.prikaziModal = !this.prikaziModal
+    },
+    handleFormSubmit(payload){
+      const logInFormData = new URLSearchParams();
+      logInFormData.append('email', payload.email);
+      logInFormData.append('password', payload.password);
+      const API_ENDPOINT2 = '/api/auth/login'
+      api.post(API_ENDPOINT2, logInFormData)
+      .then(response => {
+        // Uspješno sačuvano
+        const token = response.data.access_token;
+        localStorage.setItem('token', token);
+        this.$router.push('/user');
+      })
+      .catch(error => {
+        // Greška pri čuvanju
+        console.error(error.response.data.message);
+      });
     },
 }
 }

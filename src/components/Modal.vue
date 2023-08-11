@@ -18,7 +18,7 @@
             <a href="#" class="text-decoration-none text-dark">Zaboravljena lozinka?</a>
         </div>
         <div class="text-start">
-            <a href="" class="p-1 text-decoration-none text-dark border border-dark rounded">Registriraj se</a>
+            <router-link to="/register" class="p-1 text-decoration-none text-dark border border-dark rounded">Registriraj se</router-link>
         </div>
     </div>
   </div>

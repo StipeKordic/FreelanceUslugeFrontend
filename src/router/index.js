@@ -4,6 +4,9 @@ import AboutView from '../views/AboutView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import LoggedInView from '../views/LoggedInView.vue'
 import UserProfileView from '../views/UserProfileView.vue'
+import ManagePostsView from '../views/ManagePostsView.vue'
+import ManageUsersView from '../views/ManageUsersView.vue'
+import ManageServicesView from '../views/ManageServicesView.vue'
 
 
 const routes = [
@@ -31,6 +34,21 @@ const routes = [
     path: '/user/profile',
     name: 'userProfile',
     component: UserProfileView
+  },
+  {
+    path: '/user/manage/posts',
+    name: 'managePosts',
+    component: ManagePostsView
+  },
+  {
+    path: '/user/manage/users',
+    name: 'manageUsers',
+    component: ManageUsersView
+  },
+  {
+    path: '/user/manage/services',
+    name: 'manageServices',
+    component: ManageServicesView
   },
 ]
 
