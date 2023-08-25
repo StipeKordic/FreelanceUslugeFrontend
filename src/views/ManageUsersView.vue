@@ -20,9 +20,28 @@
             <span class="fw-bold">Email: </span>
             <span>{{ korisnik.email }}</span>
           </p>
+          <p class="card-text">
+            <span class="fw-bold">Broj objava: </span>
+            <span>{{ korisnik.posts_count }}</span>
+          </p>
           <div class="action-buttons">
             <button class="btn btn-danger" @click="deleteUser(korisnik)">Izbriši korisnika</button>
           </div>
+          <div class="mt-4">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="role" id="korisnik" value="3" v-model="korisnik.user_role.role_id">
+              <label class="form-check-label" for="korisnik">Korisnik</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="role" id="admin" value="2" v-model="korisnik.user_role.role_id">
+              <label class="form-check-label" for="admin">Admin</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="role" id="superadmin" value="1" v-model="korisnik.user_role.role_id">
+              <label class="form-check-label" for="superadmin">SuperAdmin</label>
+          </div>
+          <button class="btn btn-success" @click="potvrdiMjenjanjeRole(korisnik.user_role.id, korisnik.user_role.role_id)">Promijeni rolu</button>
+        </div>
         </div>
       </div>
     </div>
@@ -46,6 +65,7 @@ mounted() {
     return {
     BASE_URL: process.env.VUE_APP_BASE_URL,
     userRole: 0,
+    mjenjanjeRole: false,
     korisnici: [],
     Korisnik: {
       id: '',
@@ -65,6 +85,21 @@ methods: {
     })
     .catch(error => {
       console.error(error);
+    });
+  },
+  potvrdiMjenjanjeRole(userrole_id, role_id){
+    const API_ENDPOINT = `/api/userroles/${userrole_id}`
+    let novaRola = {
+            "role_id": role_id,
+        }
+    api.put(API_ENDPOINT, novaRola)
+    .then(response => {
+        console.log("Uspješno");
+        window.location.reload();
+    })
+    .catch(error => {
+      // Greška pri čuvanju
+      console.error(error.response.data.message);
     });
   },
   dohvacanjeSvihKorisnika(){
@@ -117,6 +152,8 @@ methods: {
         // Greška pri dohvaćanju informacija o korisniku
           console.error(error.response.data.message);
         });
+      }else{
+        this.$router.push('/error');
       }
     },
 }

@@ -9,7 +9,12 @@
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password:</label>
-                <input type="password" id="password" v-model="formData.password" class="form-control" required>
+                <div class="d-flex">
+                <input v-bind:type="passwordFieldType" id="password" v-model="formData.password" class="form-control" required>
+                <button class="btn btn-link" @click="togglePasswordVisibility">
+                  <i v-bind:class="passwordFieldType === 'password' ? 'far fa-eye' : 'far fa-eye-slash'"></i>
+                </button>
+              </div>
             </div>
             <button type="submit" class="btn btn-dark mb-3">Prijavi se</button>
         </form>
@@ -32,6 +37,7 @@ export default {
                 email: '',
                 password: '',
             },
+            passwordFieldType: 'password',
         }
     },
     methods: {
@@ -40,7 +46,10 @@ export default {
         },
         submitForm() {
             this.$emit('potvrdi', { email: this.formData.email, password: this.formData.password });
-        }
+        },
+        togglePasswordVisibility() {
+            this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+        },
     }
 }
 </script>

@@ -27,15 +27,18 @@
       <div class="filter-button col-md-12 col-sm-12 text-center mt-3">
           <button @click="primijeniFiltere" class="btn btn-dark">Primijeni filtere</button>
       </div>
+      <div v-if="otvorenModalObjava">
+          <ModalObjava @zatvori="otvoriZatvoriModalObjava" :showEditButton="false" :objava="objava" />
+      </div>
     <div class="card-container-objava">
-    <div class="card card-objava shadow" v-for="(objava, index) in filtriraneObjave" :key="index">
+    <div class="card card-objava shadow" v-for="(objava, index) in filtriraneObjave" :key="index" @click="otvoriZatvoriModalObjava(objava)">
       <img :src="BASE_URL + '/storage/' + objava.image_path" alt="Slika objave" class="card-img-top">
       <div class="card-body">
         <p class="card-text">{{ objava.description }}</p>
         <p class="card-price">{{ objava.price }} BAM</p>
         <div class="card-rating">
           <div class="rating-wraper">
-            <div class="ratings">
+            <div class="ratings" @click.stop>
               <span @click="setRating(index, 5)">&#9733;</span>
               <span @click="setRating(index, 4)">&#9733;</span>
               <span @click="setRating(index, 3)">&#9733;</span>
@@ -55,16 +58,20 @@
 
 <script>
   import NavbarUser from '@/components/NavbarUser.vue'
+  import ModalObjava from '@/components/ModalObjava.vue'
   import api from '../plugins/api';
   export default {
   name: 'LoggedInView',
   components: {
     NavbarUser,
+    ModalObjava
   },
   data(){
     return{
       objave: [],
+      otvorenModalObjava: false,
       objavePoUsluzi: [],
+      objava: null,
       objavePoCijeni: [],
       objavePoOcjeni: [],
       filtriraneObjave: this.objave,
@@ -112,8 +119,13 @@
         console.error(error);
       });
     },
+    otvoriZatvoriModalObjava(objava){
+      this.otvorenModalObjava = !this.otvorenModalObjava;
+      this.objava = objava;
+    },
     dohvacanjeUsera(){
       const token = localStorage.getItem('token');
+      console.log(token)
       if (token) {
           api.get('/api/auth/user', {
           headers: {
@@ -138,6 +150,8 @@
           // Greška pri dohvaćanju informacija o korisniku
             console.error(error.response.data.message);
           });
+        }else{
+          this.$router.push('/error');
         }
       },
     filtrirajPoUsluzi(service_id, ocjena, donjaCijena, gornjaCijena){

@@ -32,6 +32,10 @@
               <span v-if="!service.editing">{{ service.description }}</span>
               <textarea v-else v-model="service.description" class="form-control"></textarea>
             </p>
+            <p class="card-text">
+              <span class="fw-bold">Broj objava: </span>
+              <span >{{ service.posts_count }}</span>
+            </p>
             <div class="action-buttons">
               <button class="btn btn-dark" @click="toggleEdit(service)" v-if="!service.editing">
                 Uredi
@@ -214,6 +218,8 @@ export default {
           // Greška pri dohvaćanju informacija o korisniku
             console.error(error.response.data.message);
           });
+        }else{
+          this.$router.push('/error');
         }
       },
   }

@@ -55,6 +55,7 @@ export default {
           .then(response => {
           // Dobivene informacije o korisniku
             console.log("Uspješno!");
+            localStorage.removeItem('token');
             this.$router.push('/');
 
           // Ovdje možete spremiti informacije o korisniku u lokalno stanje ili

@@ -27,11 +27,21 @@
               </div>
               <div class="mb-3">
                 <label for="password" class="form-label">Password:</label>
-                <input type="password" id="password" v-model="formData.password" class="form-control" required>
+                <div class="d-flex">
+                <input v-bind:type="passwordFieldType" id="password" v-model="formData.password" class="form-control" required>
+                <button class="btn btn-link" @click="togglePasswordVisibility">
+                  <i v-bind:class="passwordFieldType === 'password' ? 'far fa-eye' : 'far fa-eye-slash'"></i>
+                </button>
+              </div>
               </div>
               <div class="mb-3">
                 <label for="password_confirmation" class="form-label">Confirm Password:</label>
-                <input type="password" id="password_confirmation" v-model="formData.password_confirmation" class="form-control" required>
+                <div class="d-flex">
+                <input v-bind:type="passwordFieldType" id="password_confirmation" v-model="formData.password_confirmation" class="form-control" required>
+                <button class="btn btn-link" @click="togglePasswordVisibility">
+                  <i v-bind:class="passwordFieldType === 'password' ? 'far fa-eye' : 'far fa-eye-slash'"></i>
+                </button>
+              </div>
               </div>
               <div class="mb-3">
                 <label for="image" class="form-label">Upload Image:</label>
@@ -67,6 +77,7 @@ export default {
   data() {
     return {
       prikaziModal: false,
+      passwordFieldType: 'password',
       showSuccessMessage: false,
       formData: {
         first_name: '',
@@ -79,6 +90,9 @@ export default {
     };
   },
   methods: {
+    togglePasswordVisibility() {
+      this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+    },
     handleFormSubmit(payload){
       const logInFormData = new URLSearchParams();
       logInFormData.append('email', payload.email);

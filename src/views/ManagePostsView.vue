@@ -24,6 +24,14 @@
               <span class="fw-bold">Broj ocjena: </span>
               <span>{{ post.num_reviews }}</span>
             </p>
+            <p class="card-text">
+              <span class="fw-bold">Usluga: </span>
+              <span>{{ post.service.name }}</span>
+            </p>
+            <p class="card-text">
+              <span class="fw-bold">Korisnik: </span>
+              <span>{{ post.user.email }}</span>
+            </p>
             <div class="action-buttons">
               <button class="btn btn-danger" @click="deletePost(post)">Izbriši</button>
             </div>
@@ -132,6 +140,8 @@ export default {
           // Greška pri dohvaćanju informacija o korisniku
             console.error(error.response.data.message);
           });
+        }else{
+          this.$router.push('/error');
         }
       },
   }

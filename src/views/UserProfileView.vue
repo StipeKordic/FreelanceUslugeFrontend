@@ -14,29 +14,44 @@
           <h5 class="card-title">
               <span class="fw-bold">Ime: </span>
               <span v-if="!Korisnik.editing">{{ Korisnik.ime }}</span>
-              <input v-else v-model="Korisnik.ime" class="form-control">
+              <input v-else v-model="Korisnik.ime" class="form-control text-center">
             </h5>
             <p class="card-text">
               <span class="fw-bold">Prezime: </span>
               <span v-if="!Korisnik.editing">{{ Korisnik.prezime }}</span>
-              <input v-else v-model="Korisnik.prezime" class="form-control">
+              <input v-else v-model="Korisnik.prezime" class="form-control text-center">
             </p>
-            <p class="card-text">
+            <div class="card-text">
               <span v-if="Korisnik.editing" class="fw-bold">Stara lozinka: </span>
-              <input type="password" v-if="Korisnik.editing" v-model="Korisnik.lozinka" class="form-control">
-            </p>
-            <p class="card-text">
+              <div class="d-flex">
+              <input v-bind:type="passwordFieldType" v-if="Korisnik.editing" v-model="Korisnik.lozinka" class="form-control text-center">
+              <button v-if="Korisnik.editing" class="btn btn-link" @click="togglePasswordVisibility">
+                  <i v-bind:class="passwordFieldType === 'password' ? 'far fa-eye' : 'far fa-eye-slash'"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-text">
               <span v-if="Korisnik.editing" class="fw-bold">Nova lozinka: </span>
-              <input type="password" v-if="Korisnik.editing" v-model="Korisnik.nova_lozinka" class="form-control">
-            </p>
-            <p class="card-text">
+              <div class="d-flex">
+              <input v-bind:type="passwordFieldType" v-if="Korisnik.editing" v-model="Korisnik.nova_lozinka" class="form-control text-center">
+              <button v-if="Korisnik.editing" class="btn btn-link" @click="togglePasswordVisibility">
+                  <i v-bind:class="passwordFieldType === 'password' ? 'far fa-eye' : 'far fa-eye-slash'"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-text">
               <span v-if="Korisnik.editing" class="fw-bold">Potvrdi novu lozinku: </span>
-              <input type="password" v-if="Korisnik.editing" v-model="Korisnik.potvrda_lozinke" class="form-control">
-            </p>
+              <div class="d-flex">
+              <input v-bind:type="passwordFieldType" v-if="Korisnik.editing" v-model="Korisnik.potvrda_lozinke" class="form-control text-center">
+              <button v-if="Korisnik.editing" class="btn btn-link" @click="togglePasswordVisibility">
+                  <i v-bind:class="passwordFieldType === 'password' ? 'far fa-eye' : 'far fa-eye-slash'"></i>
+                </button>
+              </div>
+            </div>
             <p class="card-text">
               <span class="fw-bold">E-mail: </span>
               <span v-if="!Korisnik.editing">{{ Korisnik.email }}</span>
-              <input v-else v-model="Korisnik.email" class="form-control">
+              <input v-else v-model="Korisnik.email" class="form-control text-center">
             </p>
         </div>
         <div class="text-center mt-2">
@@ -55,16 +70,19 @@
     <i class="fas fa-plus"></i> Dodaj novu objavu
   </button>
   <h2 class="mt-4" v-if="showNoPostsMessage">Nemate objava</h2>
+  <div v-if="otvorenModalObjava">
+          <ModalObjava @zatvori="otvoriZatvoriModalObjava" :showEditButton="true" :objava="objava" />
+      </div>
   <ModalDodajObjavu v-if="dodavanjeObjave" @zatvori="otvoriZatvoriModalObjava" :user_id="Korisnik.id" @potvrdjeno="UspjesnoSpremljeno"/>
   <div class="card-container-objava-user">
-    <div class="card card-objava-user shadow" v-for="(objava, index) in objave" :key="index">
+    <div class="card card-objava-user shadow" v-for="(objava, index) in objave" :key="index" @click="otvoriZatvoriModalObjava(objava)">
       <img :src="BASE_URL + '/storage/' + objava.image_path" alt="Slika objave" class="card-img-top">
       <div class="card-body">
         <p class="card-text">{{ objava.description }}</p>
         <p class="card-price">{{ objava.price }} BAM</p>
         <div class="card-rating">
           <div class="rating-wraper">
-            <div class="ratings">
+            <div class="ratings" @click.stop>
               <span @click="setRating(index, 5)">&#9733;</span>
               <span @click="setRating(index, 4)">&#9733;</span>
               <span @click="setRating(index, 3)">&#9733;</span>
@@ -85,6 +103,7 @@
 <script>
   import NavbarUser from '@/components/NavbarUser.vue'
   import ModalDodajObjavu from '@/components/ModalDodajObjavu.vue'
+  import ModalObjava from '@/components/ModalObjava.vue'
   import api from '../plugins/api'
 
 
@@ -92,7 +111,8 @@
     name: 'UserProfileView',
     components: {
         NavbarUser,
-        ModalDodajObjavu
+        ModalDodajObjavu,
+        ModalObjava
     },
   mounted() {
     this.dohvacanjeUsera();
@@ -102,6 +122,9 @@
       BASE_URL: process.env.VUE_APP_BASE_URL,
       userRole: 0,
       dodavanjeObjave: false,
+      objava: null,
+      passwordFieldType: 'password',
+      otvorenModalObjava: false,
       showSuccessMessage: false,
       prikaziObjave: true,
       showNoPostsMessage: false,
@@ -123,6 +146,9 @@
     otvoriZatvoriModalObjava(){
         this.dodavanjeObjave = !this.dodavanjeObjave
     },
+    togglePasswordVisibility() {
+            this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+        },
     UspjesnoSpremljeno(){
       this.dodavanjeObjave = !this.dodavanjeObjave
       this.showSuccessMessage = true;
@@ -133,6 +159,10 @@
     },
     setRating(objavaIndex, rating) {
       console.log("Ne možete ocjeniti svoju objavu!")
+    },
+    otvoriZatvoriModalObjava(objava){
+      this.otvorenModalObjava = !this.otvorenModalObjava;
+      this.objava = objava;
     },
     dohvacanjeObjava(id){
       const API_ENDPOINT = `/api/posts/filterByUser/${id}`;
@@ -239,6 +269,8 @@
           // Greška pri dohvaćanju informacija o korisniku
             console.error(error.response.data.message);
           });
+          }else{
+            this.$router.push('/error');
           }
       },
   }

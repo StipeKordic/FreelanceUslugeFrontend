@@ -7,6 +7,7 @@ import UserProfileView from '../views/UserProfileView.vue'
 import ManagePostsView from '../views/ManagePostsView.vue'
 import ManageUsersView from '../views/ManageUsersView.vue'
 import ManageServicesView from '../views/ManageServicesView.vue'
+import ErrorView from '../views/ErrorView.vue'
 
 
 const routes = [
@@ -49,6 +50,11 @@ const routes = [
     path: '/user/manage/services',
     name: 'manageServices',
     component: ManageServicesView
+  },
+  {
+    path: '/error',
+    name: 'error',
+    component: ErrorView
   },
 ]
 
