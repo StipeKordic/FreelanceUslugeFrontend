@@ -106,6 +106,7 @@ methods: {
       api.get('/api/auth')
       .then(response => {
           this.korisnici = response.data;
+          console.log(this.korisnici)
       })
       .catch(error => {
           console.error(error);
@@ -143,7 +144,7 @@ methods: {
           this.Korisnik.email = korisnik.email;
           this.Korisnik.putanja = korisnik.image_path;
           this.Korisnik.id = korisnik.id;
-          this.dohvacanjeRole(korisnik.id)
+          this.dohvacanjeRole(korisnik.id);
 
         // Ovdje možete spremiti informacije o korisniku u lokalno stanje ili
         // izvršiti druge akcije koje su vam potrebne

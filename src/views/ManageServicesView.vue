@@ -209,7 +209,7 @@ export default {
             this.Korisnik.email = korisnik.email;
             this.Korisnik.putanja = korisnik.image_path;
             this.Korisnik.id = korisnik.id;
-            this.dohvacanjeRole(korisnik.id)
+            this.dohvacanjeRole(korisnik.id);
 
           // Ovdje možete spremiti informacije o korisniku u lokalno stanje ili
           // izvršiti druge akcije koje su vam potrebne
