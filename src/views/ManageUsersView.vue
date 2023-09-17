@@ -29,15 +29,15 @@
           </div>
           <div class="mt-4">
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="role" id="korisnik" value="3" v-model="korisnik.user_role.role_id">
+              <input class="form-check-input" type="radio" :name="'role' + korisnik.id" id="korisnik" value="3" v-model="korisnik.user_role.role_id">
               <label class="form-check-label" for="korisnik">Korisnik</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="role" id="admin" value="2" v-model="korisnik.user_role.role_id">
+              <input class="form-check-input" type="radio" :name="'role' + korisnik.id" id="admin" value="2" v-model="korisnik.user_role.role_id">
               <label class="form-check-label" for="admin">Admin</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="role" id="superadmin" value="1" v-model="korisnik.user_role.role_id">
+              <input class="form-check-input" type="radio" :name="'role' + korisnik.id" id="superadmin" value="1" v-model="korisnik.user_role.role_id">
               <label class="form-check-label" for="superadmin">SuperAdmin</label>
           </div>
           <button class="btn btn-success" @click="potvrdiMjenjanjeRole(korisnik.user_role.id, korisnik.user_role.role_id)">Promijeni rolu</button>
@@ -82,6 +82,9 @@ methods: {
     api.get(API_ENDPOINT)
     .then(response => {
       this.userRole = response.data[0].role_id;
+      if (this.userRole > 1){
+        this.$router.push('/error');
+      }
     })
     .catch(error => {
       console.error(error);

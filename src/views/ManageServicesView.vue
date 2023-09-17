@@ -12,7 +12,7 @@
       <div class="row g-0">
         <div class="col-md-4">
           <img :src="BASE_URL + '/storage/' + service.image_path" alt="Slika usluge" class="card-img-top">
-          <input type="file" id="image" @change="handleImageUpload" accept="image/*" class="form-control">
+          <input type="file" id="image" @change="handleImageUpload2" accept="image/*" class="form-control">
           <button type="submit" class="btn btn-dark mb-3" @click="promijeniSliku(service)">Promijeni sliku</button>
         </div>
         <div class="col-md-8">
@@ -90,6 +90,9 @@ export default {
       api.get(API_ENDPOINT)
       .then(response => {
         this.userRole = response.data[0].role_id;
+        if (this.userRole > 2){
+          this.$router.push('/error');
+        }
       })
       .catch(error => {
         console.error(error);
@@ -125,7 +128,7 @@ export default {
             console.error(error);
         });
     },
-    handleImageUpload(event) {
+    handleImageUpload2(event) {
               // Očitavanje izabrane slike i čuvanje u formData objektu
         this.slika = event.target.files[0];
       },

@@ -66,14 +66,14 @@
   </div>
   <hr>
   <h2 class="mt-4" v-if="!showNoPostsMessage">Vaše objave:</h2>
-  <button class="btn btn-dark" @click="otvoriZatvoriModalObjava">
+  <button class="btn btn-dark" @click="otvoriZatvoriModalDodavanjeObjava">
     <i class="fas fa-plus"></i> Dodaj novu objavu
   </button>
   <h2 class="mt-4" v-if="showNoPostsMessage">Nemate objava</h2>
   <div v-if="otvorenModalObjava">
           <ModalObjava @zatvori="otvoriZatvoriModalObjava" :showEditButton="true" :objava="objava" />
       </div>
-  <ModalDodajObjavu v-if="dodavanjeObjave" @zatvori="otvoriZatvoriModalObjava" :user_id="Korisnik.id" @potvrdjeno="UspjesnoSpremljeno"/>
+  <ModalDodajObjavu v-if="dodavanjeObjave" @zatvori="otvoriZatvoriModalDodavanjeObjava" :user_id="Korisnik.id" @potvrdjeno="UspjesnoSpremljeno"/>
   <div class="card-container-objava-user">
     <div class="card card-objava-user shadow" v-for="(objava, index) in objave" :key="index" @click="otvoriZatvoriModalObjava(objava)">
       <img :src="BASE_URL + '/storage/' + objava.image_path" alt="Slika objave" class="card-img-top">
@@ -143,7 +143,7 @@
     }
   },
   methods: {
-    otvoriZatvoriModalObjava(){
+    otvoriZatvoriModalDodavanjeObjava(){
         this.dodavanjeObjave = !this.dodavanjeObjave
     },
     togglePasswordVisibility() {

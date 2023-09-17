@@ -76,6 +76,9 @@ export default {
       api.get(API_ENDPOINT)
       .then(response => {
         this.userRole = response.data[0].role_id;
+        if (this.userRole > 2){
+          this.$router.push('/error');
+      }
       })
       .catch(error => {
         console.error(error);

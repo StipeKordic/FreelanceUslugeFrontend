@@ -6,9 +6,9 @@
   <div class="position-relative">
   <img id="naslovna-slika" src="../../usluge/Naslovna.jpg" alt="Slika" />
   <div class="position-absolute top-50 start-50 translate-right">
-    <h1 class="tekst-naslovna-slika">Radi šta hoćeš</h1>
-    <h1 class="tekst-naslovna-slika">kada hoćeš</h1>
-    <h1 class="tekst-naslovna-slika">i gdje hoćeš</h1>
+    <h1 class="tekst-naslovna-slika">Izrazite vlastitu</h1>
+    <h1 class="tekst-naslovna-slika">kreativnost u svojim</h1>
+    <h1 class="tekst-naslovna-slika">uvjetima rada</h1>
   </div>
 </div>
 
@@ -32,7 +32,7 @@
         <ul>
           <li>Sam biraj što te zanima i što želiš raditi</li>
           <li>Radi od kuće kada ti odgovara</li>
-          <li>Još neka napomena</li>
+          <li>Pronađi uslugu koja ti treba i olakšaj si posao</li>
         </ul>
       </div>
   </div>
@@ -92,6 +92,7 @@ export default {
     api.get('/api/services')
       .then(response => {
         const usluge = response.data;
+        usluge.sort((a,b) => b.posts_count - a.posts_count)
         usluge.splice(4);
         for(let i=0;i<4;i++){
           this.Usluge[i].image = usluge[i].image_path;

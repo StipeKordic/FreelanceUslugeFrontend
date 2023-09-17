@@ -12,9 +12,9 @@
           <img src="../../usluge/profilna_Stipe.jpg" class="card-img-top rounded-circle mx-auto mt-3" style="width: 100px; height: 100px;" alt="Slika">
           <div class="card-body">
             <h5 class="card-title text-center">Stipe Kordić</h5>
-            <p class="card-text text-center">Opis</p>
+            <p class="card-text text-center">Preddiplomski studij matematike i informatike</p>
             <button class="btn btn-light d-block mx-auto">
-              <i class="fab fa-github"></i>
+              <a href="https://github.com/StipeKordic" target="blank"><i class="fab fa-github"></i></a>
             </button>
           </div>
         </div>
@@ -25,9 +25,9 @@
           <img src="../../usluge/profilna_Antonela.jpg" class="card-img-top rounded-circle mx-auto mt-3" style="width: 100px; height: 100px;" alt="Slika">
           <div class="card-body">
             <h5 class="card-title text-center">Antonela Galić</h5>
-            <p class="card-text text-center">Opis</p>
+            <p class="card-text text-center">Preddiplomski studij informatike</p>
             <button class="btn btn-light d-block mx-auto">
-              <i class="fab fa-github"></i>
+              <a href="https://github.com/AntonelaGalicc" target="blank"><i class="fab fa-github"></i></a>
             </button>
           </div>
         </div>

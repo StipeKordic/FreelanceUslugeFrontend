@@ -1,7 +1,7 @@
 <template>
     <div class="backdrop" @click.self="zatvoriModal">
         <div class="modalObjava">
-            <img :src="BASE_URL + '/storage/' + objava.image_path" alt="Slika objave" class="img-fluid rounded">
+            <img :src="BASE_URL + '/storage/' + objava.image_path" alt="Slika objave" class="card-img-top rounded">
             <div class="col-md-12">
                 <!-- Informacije o objavi -->
                 <span class="fw-bold">Opis: </span>
@@ -13,7 +13,7 @@
                 <input v-else v-model="objava.price" class="form-control">
                 <p></p>
                 <p><span class="fw-bold">Ocjena:</span> {{ objava.review }}</p>
-                <p><span class="fw-bold">Broj ocjena:</span> {{ objava.num_review }}</p>
+                <p><span class="fw-bold">Broj ocjena:</span> {{ objava.num_reviews }}</p>
                 <p><span class="fw-bold">Usluga:</span> {{ objava.service.name }}</p>
                 <p><span class="fw-bold">Korisnik:</span> {{ objava.user.email }}</p>
             </div>
@@ -109,6 +109,11 @@
         width: 100%;
         height: 100%;
         z-index: 99998;
+    }
+    .card-img-top {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
     }
   </style>
   
