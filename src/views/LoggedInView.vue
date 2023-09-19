@@ -82,7 +82,7 @@
       userRole: 0,
       odabranaUsluga: "",
       donjaCijena: 0,
-      gornjaCijena: 9999999999,
+      gornjaCijena: 10000,
       BASE_URL: process.env.VUE_APP_BASE_URL,
       Korisnik: {
         id: '',

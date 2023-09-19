@@ -2,10 +2,10 @@
     <div class="footer-wrapper">
       <div class="footer bg-light">
         <ul class="social-icons d-flex">
-          <li><a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram text-dark fa-border"></i></a></li>
-          <li><a href="https://www.facebook.com/" target="_blank"><i class="fab fa-facebook text-dark fa-border"></i></a></li>
-          <li><a href="https://twitter.com/" target="_blank"><i class="fab fa-twitter text-dark fa-border"></i></a></li>
-          <li><a href="https://www.linkedin.com/" target="_blank"><i class="fab fa-linkedin text-dark fa-border"></i></a></li>
+          <li><a href="https://www.instagram.com/" target="blank"><i class="fab fa-instagram text-dark fa-border"></i></a></li>
+          <li><a href="https://www.facebook.com/" target="blank"><i class="fab fa-facebook text-dark fa-border"></i></a></li>
+          <li><a href="https://twitter.com/" target="blank"><i class="fab fa-twitter text-dark fa-border"></i></a></li>
+          <li><a href="https://www.linkedin.com/" target="blank"><i class="fab fa-linkedin text-dark fa-border"></i></a></li>
         </ul>
       </div>
       <div class="footer bg-dark text-white">
