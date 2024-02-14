@@ -9,7 +9,7 @@
         </ul>
       </div>
       <div class="footer bg-dark text-white">
-        <p class="py-2">Freelance usluge - Stipe Kordić i Antonela Galić</p>
+        <p class="py-2">Freelance Services. Allrights reserved.</p>
       </div>
     </div>
 </template>

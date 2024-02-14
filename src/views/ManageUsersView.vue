@@ -2,45 +2,46 @@
   <NavbarUser :path=Korisnik.putanja :rola=userRole />
   <div class="users-list">
   <div v-for="korisnik in korisnici" :key="korisnik.id" class="card mb-3">
-    <div class="row g-0" v-if="korisnik.id!=Korisnik.id">
+    <div class="row g-0" v-if="korisnik.User.id!=Korisnik.id">
       <div class="col-md-4">
-        <img :src="BASE_URL + '/storage/' + korisnik.image_path" alt="Slika objave" class="card-img-top">
+        <img :src="BASE_URL + korisnik.User.image_path" alt="Slika objave" class="card-img-top">
       </div>
       <div class="col-md-8">
         <div class="card-body">
           <h5 class="card-title">
-            <span class="fw-bold">Ime: </span>
-            <span>{{ korisnik.first_name }}</span>
+            <span class="fw-bold">First name: </span>
+            <span>{{ korisnik.User.first_name }}</span>
           </h5>
           <p class="card-text">
-            <span class="fw-bold">Prezime: </span>
-            <span >{{ korisnik.last_name }}</span>
+            <span class="fw-bold">Last name: </span>
+            <span >{{ korisnik.User.last_name }}</span>
           </p>
           <p class="card-text">
-            <span class="fw-bold">Email: </span>
-            <span>{{ korisnik.email }}</span>
+            <span class="fw-bold">E-mail: </span>
+            <span>{{ korisnik.User.email }}</span>
           </p>
-          <p class="card-text">
+          <!--<p class="card-text">
             <span class="fw-bold">Broj objava: </span>
-            <span>{{ korisnik.posts_count }}</span>
+            <span>korisnik.User.posts_count</span>
           </p>
+        -->
           <div class="action-buttons">
-            <button class="btn btn-danger" @click="deleteUser(korisnik)">Izbriši korisnika</button>
+            <button class="btn btn-danger" @click="deleteUser(korisnik)">Delete user</button>
           </div>
           <div class="mt-4">
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" :name="'role' + korisnik.id" id="korisnik" value="3" v-model="korisnik.user_role.role_id">
-              <label class="form-check-label" for="korisnik">Korisnik</label>
+              <input class="form-check-input" type="radio" :name="'role' + korisnik.User.id" id="RegularUser" value="3" v-model="korisnik.Role.id">
+              <label class="form-check-label" for="RegularUser">RegularUser</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" :name="'role' + korisnik.id" id="admin" value="2" v-model="korisnik.user_role.role_id">
-              <label class="form-check-label" for="admin">Admin</label>
+              <input class="form-check-input" type="radio" :name="'role' + korisnik.User.id" id="Admin" value="2" v-model="korisnik.Role.id">
+              <label class="form-check-label" for="Admin">Admin</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" :name="'role' + korisnik.id" id="superadmin" value="1" v-model="korisnik.user_role.role_id">
-              <label class="form-check-label" for="superadmin">SuperAdmin</label>
+              <input class="form-check-input" type="radio" :name="'role' + korisnik.User.id" id="SuperAdmin" value="1" v-model="korisnik.Role.id">
+              <label class="form-check-label" for="SuperAdmin">SuperAdmin</label>
           </div>
-          <button class="btn btn-success" @click="potvrdiMjenjanjeRole(korisnik.user_role.id, korisnik.user_role.role_id)">Promijeni rolu</button>
+          <button class="btn btn-success" @click="potvrdiMjenjanjeRole(korisnik.User.id, korisnik.Role.id)">Change role</button>
         </div>
         </div>
       </div>
@@ -77,27 +78,18 @@ mounted() {
   }
 },
 methods: {
-  dohvacanjeRole(id){
-    const API_ENDPOINT = `/api/userroles/getRoleByUser/${id}`;
-    api.get(API_ENDPOINT)
-    .then(response => {
-      this.userRole = response.data[0].role_id;
-      if (this.userRole > 1){
-        this.$router.push('/error');
-      }
-    })
-    .catch(error => {
-      console.error(error);
-    });
-  },
   potvrdiMjenjanjeRole(userrole_id, role_id){
-    const API_ENDPOINT = `/api/userroles/${userrole_id}`
-    let novaRola = {
-            "role_id": role_id,
-        }
-    api.put(API_ENDPOINT, novaRola)
+    role_id = parseInt(role_id)
+    const API_ENDPOINT = `/roles/user/${userrole_id}/${role_id}`;
+    const token = localStorage.getItem('token');
+    api.put(API_ENDPOINT, null, {
+          headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${token}`
+          }
+          })
     .then(response => {
-        console.log("Uspješno");
+        console.log("Successful");
         window.location.reload();
     })
     .catch(error => {
@@ -106,7 +98,12 @@ methods: {
     });
   },
   dohvacanjeSvihKorisnika(){
-      api.get('/api/auth')
+    const token = localStorage.getItem('token');
+      api.get('/users', {
+          headers: {
+              Authorization: `Bearer ${token}`
+          }
+          })
       .then(response => {
           this.korisnici = response.data;
           console.log(this.korisnici)
@@ -116,15 +113,20 @@ methods: {
       });
   },
   deleteUser(korisnik){
-      if (window.confirm('Jeste li sigurni da želite izbrisati ovu objavu?')) {
+      if (window.confirm('Are you sure you want to delete this user??')) {
           this.izbrisiKorisnika(korisnik);
     }
   },
   izbrisiKorisnika(korisnik){
-      const API_ENDPOINT = `/api/auth/${korisnik.id}`
-      api.delete(API_ENDPOINT)
+      const API_ENDPOINT = `/users/${korisnik.User.id}`;
+      const token = localStorage.getItem('token');
+      api.delete(API_ENDPOINT, {
+          headers: {
+              Authorization: `Bearer ${token}`
+          }
+          })
       .then(response => {
-          console.log("Uspješno")
+          console.log("Successful")
           window.location.reload();
       })
       .catch(error => {
@@ -132,34 +134,39 @@ methods: {
       });
   },
   dohvacanjeUsera(){
-    const token = localStorage.getItem('token');
-    if (token) {
-        api.get('/api/auth/user', {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-        })
-        .then(response => {
-        // Dobivene informacije o korisniku
-          const korisnik = response.data;
-          this.Korisnik.ime = korisnik.first_name;
-          this.Korisnik.prezime = korisnik.last_name;
-          this.Korisnik.email = korisnik.email;
-          this.Korisnik.putanja = korisnik.image_path;
-          this.Korisnik.id = korisnik.id;
-          this.dohvacanjeRole(korisnik.id);
+      const token = localStorage.getItem('token');
+      if (token) {
+        const parts = token.split('.');
+        const payload = atob(parts[1]);
+        const payloadObject = JSON.parse(payload);
+        const userId = payloadObject.user_id;
+        const endpoint = 'users/' + userId
+          api.get(endpoint, {
+          headers: {
+              Authorization: `Bearer ${token}`
+          }
+          })
+          .then(response => {
+          // Dobivene informacije o korisniku
+            const korisnik = response.data;
+            this.Korisnik.ime = korisnik["User"].first_name;
+            this.Korisnik.prezime = korisnik["User"].last_name;
+            this.Korisnik.email = korisnik["User"].email;
+            this.Korisnik.putanja = korisnik["User"].image_path;
+            this.Korisnik.id = userId
+            this.userRole = korisnik["Role"].id
 
-        // Ovdje možete spremiti informacije o korisniku u lokalno stanje ili
-        // izvršiti druge akcije koje su vam potrebne
-        })
-        .catch(error => {
-        // Greška pri dohvaćanju informacija o korisniku
-          console.error(error.response.data.message);
-        });
-      }else{
-        this.$router.push('/error');
-      }
-    },
+          // Ovdje možete spremiti informacije o korisniku u lokalno stanje ili
+          // izvršiti druge akcije koje su vam potrebne
+          })
+          .catch(error => {
+          // Greška pri dohvaćanju informacija o korisniku
+            console.error(error.response.data.message);
+          });
+        }else{
+          this.$router.push('/error');
+        }
+      },
 }
 }
 </script>

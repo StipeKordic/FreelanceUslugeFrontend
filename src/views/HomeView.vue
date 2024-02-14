@@ -6,33 +6,33 @@
   <div class="position-relative">
   <img id="naslovna-slika" src="../../usluge/Naslovna.jpg" alt="Slika" />
   <div class="position-absolute top-50 start-50 translate-right">
-    <h1 class="tekst-naslovna-slika">Izrazite vlastitu</h1>
-    <h1 class="tekst-naslovna-slika">kreativnost u svojim</h1>
-    <h1 class="tekst-naslovna-slika">uvjetima rada</h1>
+    <h1 class="tekst-naslovna-slika">Express your </h1>
+    <h1 class="tekst-naslovna-slika">creativity in your own</h1>
+    <h1 class="tekst-naslovna-slika">working conditions</h1>
   </div>
 </div>
 
-  <h1 class="my-5">Popularne usluge:</h1>
+  <h1 class="my-5">Popular services:</h1>
   <div class="container mt-5">
     <div class="row">
       <div class="col-md-6 col-lg-3" v-for="usluga in Usluge" :key="usluga.id">
         <div class="card my-3 shadow slike-usluga">
-          <img :src="BASE_URL + '/storage/' + usluga.image" class="card-img-top rounded" alt="Slika" />
+          <img :src="BASE_URL + usluga.image" class="card-img-top rounded" alt="Slika" />
           <h3 class="mt-3">{{ usluga.title }}</h3>
           <p>{{ usluga.description }}</p>
         </div>
       </div>
     </div>
   </div>
-  <h1 class="my-5">Što nudimo:</h1>
+  <h1 class="my-5">What do we offer:</h1>
   <div class="sekcija-sto-nudimo-obrub">
     <div class="sekcija-sto-nudimo">
       <img class="slika-sto-nudimo" src="../../usluge/slika_sto_nudimo.jpg" alt="Slika">
       <div class="tekst-sto-nudimo">
         <ul>
-          <li>Sam biraj što te zanima i što želiš raditi</li>
-          <li>Radi od kuće kada ti odgovara</li>
-          <li>Pronađi uslugu koja ti treba i olakšaj si posao</li>
+          <li>Choose what interests you and what you want to do</li>
+          <li>Work from home when it suits you</li>
+          <li>Find the service you need and make your work easier</li>
         </ul>
       </div>
   </div>
@@ -70,11 +70,26 @@ export default {
       this.prikaziModal = !this.prikaziModal
     },
     handleFormSubmit(payload){
+
+      // Create a new URLSearchParams object
       const logInFormData = new URLSearchParams();
-      logInFormData.append('email', payload.email);
+
+      // Append email and password to the form data
+      logInFormData.append('username', payload.email);
       logInFormData.append('password', payload.password);
-      const API_ENDPOINT2 = '/api/auth/login'
-      api.post(API_ENDPOINT2, logInFormData)
+
+      // Define the API endpoint for login
+      const API_ENDPOINT2 = '/auth/login';
+
+      // Log the form data for debugging
+      console.log(logInFormData);
+
+      // Send a POST request to the login endpoint with form data
+      api.post(API_ENDPOINT2, logInFormData, {
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+          }
+      })
       .then(response => {
         // Uspješno sačuvano
         const token = response.data.access_token;
@@ -89,15 +104,14 @@ export default {
   },
   mounted() {
     // Dohvatite podatke i postavite putanja kad se komponenta montira
-    api.get('/api/services')
+    api.get('/services')
       .then(response => {
         const usluge = response.data;
-        usluge.sort((a,b) => b.posts_count - a.posts_count)
         usluge.splice(4);
         for(let i=0;i<4;i++){
-          this.Usluge[i].image = usluge[i].image_path;
-          this.Usluge[i].title = usluge[i].name;
-          this.Usluge[i].description = usluge[i].short_description;
+          this.Usluge[i].image = usluge[i]["Service"].image_path;
+          this.Usluge[i].title = usluge[i]["Service"].name;
+          this.Usluge[i].description = usluge[i]["Service"].short_description;
         }
       })
       .catch(error => {

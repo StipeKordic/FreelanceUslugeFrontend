@@ -1,25 +1,25 @@
 <template>
     <div class="backdrop" @click.self="zatvoriModal">
       <div class="modall">
-          <h3>Dodaj novu uslugu</h3>
+          <h3>Add new service</h3>
           <form @submit.prevent="submitForm" enctype="multipart/form-data">
                 <div class="mb-3">
-                    <label for="name">Ime:</label>
+                    <label for="name">First name:</label>
                     <input type="text" id="name" v-model="formData.name" required>
                 </div>
                 <div class="mb-3">
-                    <label for="name">Kratki opis:</label>
+                    <label for="name">Short description:</label>
                     <input type="text" id="short_description" v-model="formData.short_description" required>
                 </div>
               <div class="mb-3">
-                <label for="description">Opis:</label>
+                <label for="description">Description:</label>
                 <textarea id="description" v-model="formData.description" class="form-control" required></textarea>
               </div>
               <div class="mb-3">
-                <label for="image">Slika:</label>
+                <label for="image">Image:</label>
                 <input type="file" id="image" @change="handleImageUpload" accept="image/*" class="form-control">
               </div>
-              <button type="submit" class="btn btn-dark mb-3">Dodaj</button>
+              <button type="submit" class="btn btn-dark mb-3">Submit</button>
           </form>
       </div>
     </div>
@@ -56,15 +56,16 @@
               formData.append('short_description', this.formData.short_description);
               formData.append('description', this.formData.description);
               if (this.formData.image) {
-                formData.append('image_path', this.formData.image);
+                formData.append('file', this.formData.image);
               }
               // Definišemo API endpoint
-              const API_ENDPOINT = '/api/services';
-
+              const API_ENDPOINT = '/services';
+              const token = localStorage.getItem('token');
               // Slanje POST zahteva na backend
               api.post(API_ENDPOINT, formData, {
                 headers: {
                   'Content-Type': 'multipart/form-data', // Ovo je važno kada šaljete sliku
+                  Authorization: `Bearer ${token}`
                 },
               })
               .then(response => {
@@ -81,7 +82,7 @@
           },
 
   mounted() {
-    api.get('/api/services')
+    api.get('/services')
       .then(response => {
         this.services = response.data;
       })

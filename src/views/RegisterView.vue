@@ -5,13 +5,13 @@
   </div>
   <div class="home">
     <div v-if="showSuccessMessage" class="alert alert-success mt-4" role="alert">
-      Uspješna registracija! Sada se prijavite sa svojim podacima.
+      Sign up successful! Please log in!
     </div>
     <div class="container mt-4">
       <div class="row justify-content-center">
         <div class="col-md-6">
           <div class="card p-4 bg-light text-dark rounded">
-            <h2 class="mb-4">Unesite podatke</h2>
+            <h2 class="mb-4">Input data:</h2>
             <form @submit.prevent="submitForm" enctype="multipart/form-data">
               <div class="mb-3">
                 <label for="first_name" class="form-label">First Name:</label>
@@ -22,7 +22,7 @@
                 <input type="text" id="last_name" v-model="formData.last_name" class="form-control" required>
               </div>
               <div class="mb-3">
-                <label for="email" class="form-label">Email:</label>
+                <label for="email" class="form-label">E-mail:</label>
                 <input type="email" id="email" v-model="formData.email" class="form-control" required>
               </div>
               <div class="mb-3">
@@ -47,7 +47,7 @@
                 <label for="image" class="form-label">Upload Image:</label>
                 <input type="file" id="image" @change="handleImageUpload" accept="image/*" class="form-control">
               </div>
-              <button type="submit" class="btn btn-dark">Register</button>
+              <button type="submit" class="btn btn-dark">Sign up</button>
             </form>
           </div>
         </div>
@@ -94,21 +94,36 @@ export default {
       this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
     },
     handleFormSubmit(payload){
-      const logInFormData = new URLSearchParams();
-      logInFormData.append('email', payload.email);
-      logInFormData.append('password', payload.password);
-      const API_ENDPOINT2 = '/api/auth/login'
-      api.post(API_ENDPOINT2, logInFormData)
-      .then(response => {
-        // Uspješno sačuvano
-        const token = response.data.access_token;
-        localStorage.setItem('token', token);
-        this.$router.push('/user');
-      })
-      .catch(error => {
-        // Greška pri čuvanju
-        console.error(error.response.data.message);
-      });
+
+    // Create a new URLSearchParams object
+    const logInFormData = new URLSearchParams();
+
+    // Append email and password to the form data
+    logInFormData.append('username', payload.email);
+    logInFormData.append('password', payload.password);
+
+    // Define the API endpoint for login
+    const API_ENDPOINT2 = '/auth/login';
+
+    // Log the form data for debugging
+    console.log(logInFormData);
+
+    // Send a POST request to the login endpoint with form data
+    api.post(API_ENDPOINT2, logInFormData, {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    })
+    .then(response => {
+      // Uspješno sačuvano
+      const token = response.data.access_token;
+      localStorage.setItem('token', token);
+      this.$router.push('/user');
+    })
+    .catch(error => {
+      // Greška pri čuvanju
+      console.error(error.response.data.message);
+    });
     },
     otvoriZatvoriModal(){
       this.prikaziModal = !this.prikaziModal
@@ -126,12 +141,12 @@ export default {
       formData.append('last_name', this.formData.last_name);
       formData.append('email', this.formData.email);
       formData.append('password', this.formData.password);
-      formData.append('password_confirmation', this.formData.password_confirmation);
+      formData.append('confirm_password', this.formData.password_confirmation);
       if (this.formData.image) {
-        formData.append('image_path', this.formData.image);
+        formData.append('file', this.formData.image);
       }
       // Definišemo API endpoint
-      const API_ENDPOINT = '/api/auth/register';
+      const API_ENDPOINT = '/users/signup';
 
       // Slanje POST zahteva na backend
       api.post(API_ENDPOINT, formData, {

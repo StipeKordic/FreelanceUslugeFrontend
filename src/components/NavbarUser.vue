@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <router-link to="/user" class="navbar-brand logo custom-logo">Freelance Usluge</router-link>
+      <router-link to="/user" class="navbar-brand logo custom-logo">Freelance Services</router-link>
       
       <div class="dropdown ms-auto" style="margin-right: 30px;">
         <button
@@ -13,18 +13,18 @@
         >
           <img
             class="rounded-circle"
-            :src="BASE_URL + '/storage/' + path"
+            :src="BASE_URL + path"
             alt="Profilna slika"
             width="50"
             height="50"
           />
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-          <li><router-link to="/user/profile" class="dropdown-item">Profil</router-link></li>
-          <li><router-link to="/user/manage/posts" class="dropdown-item" v-if="prikaziZaSuperAdmina||prikaziZaAdmina">Upravljaj objavama</router-link></li>
-          <li><router-link to="/user/manage/users" class="dropdown-item" v-if="prikaziZaSuperAdmina">Upravljaj korisnicima</router-link></li>
-          <li><router-link to="/user/manage/services" class="dropdown-item" v-if="prikaziZaSuperAdmina||prikaziZaAdmina">Upravljaj uslugama</router-link></li>
-          <li><button class="dropdown-item" @click="logoutUsera">Odjavi se</button></li>
+          <li><router-link to="/user/profile" class="dropdown-item">Profile</router-link></li>
+          <li><router-link to="/user/manage/posts" class="dropdown-item" v-if="prikaziZaSuperAdmina||prikaziZaAdmina">Manage posts</router-link></li>
+          <li><router-link to="/user/manage/users" class="dropdown-item" v-if="prikaziZaSuperAdmina">Manage users</router-link></li>
+          <li><router-link to="/user/manage/services" class="dropdown-item" v-if="prikaziZaSuperAdmina||prikaziZaAdmina">Manage services</router-link></li>
+          <li><button class="dropdown-item" @click="logoutUsera">Logout</button></li>
         </ul>
       </div>
       
@@ -47,14 +47,14 @@ export default {
     logoutUsera(){
       const token = localStorage.getItem('token');
       if (token) {
-          api.get('/api/auth/logout', {
+          api.get('/auth/logout', {
           headers: {
               Authorization: `Bearer ${token}`
           }
           })
           .then(response => {
           // Dobivene informacije o korisniku
-            console.log("Uspješno!");
+            console.log("Successful!");
             localStorage.removeItem('token');
             this.$router.push('/');
 

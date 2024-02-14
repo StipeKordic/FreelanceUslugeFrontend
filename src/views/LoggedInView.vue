@@ -3,56 +3,77 @@
       <div class="filter-container justify-content-around mt-3">
         <div class="row">
           <div class="filter-item col-md-3 col-sm-6">
-            <label for="usluga">Usluga:</label>
+            <label for="usluga">Service:</label>
             <select v-model="odabranaUsluga" id="usluga" class="form-control">
-              <option value="">Sve usluge</option>
-              <option v-for="usluga in usluge" :key="usluga.id" :value="usluga.id">{{ usluga.name }}</option>
+              <option value="0">All services</option>
+              <option v-for="usluga in usluge" :key="usluga.Service.id" :value="usluga.Service.id">{{ usluga["Service"].name }}</option>
             </select>
           </div>
           <div class="filter-item col-md-3 col-sm-6">
-            <label for="donjaCijena">Donja cijena:</label>
+            <label for="donjaCijena">Lower bound price:</label>
             <input type="number" v-model="donjaCijena" id="donjaCijena" class="form-control" />
           </div>
           <div class="filter-item col-md-3 col-sm-6">
-            <label for="gornjaCijena">Gornja cijena:</label>
+            <label for="gornjaCijena">Upper bound price:</label>
             <input type="number" v-model="gornjaCijena" id="gornjaCijena" class="form-control" />
           </div>
           <div class="filter-item col-md-3 col-sm-6">
-            <label for="ocjena">Ocjena:</label>
+            <label for="ocjena">Review:</label>
             <input type="range" v-model="ocjena" id="ocjena" class="form-range" min="0" max="5" step="0.1" />
             <span class="range-value">{{ ocjena }}</span>
           </div>
         </div>
       </div>
       <div class="filter-button col-md-12 col-sm-12 text-center mt-3">
-          <button @click="primijeniFiltere" class="btn btn-dark">Primijeni filtere</button>
+          <button @click="primijeniFiltere(this.currentPage)" class="btn btn-dark">Apply filters</button>
+          <button @click="resetirajFiltere" class="btn btn-light border border-dark border-2">Reset filters</button>
       </div>
       <div v-if="otvorenModalObjava">
           <ModalObjava @zatvori="otvoriZatvoriModalObjava" :showEditButton="false" :objava="objava" />
       </div>
     <div class="card-container-objava">
-    <div class="card card-objava shadow" v-for="(objava, index) in filtriraneObjave" :key="index" @click="otvoriZatvoriModalObjava(objava)">
-      <img :src="BASE_URL + '/storage/' + objava.image_path" alt="Slika objave" class="card-img-top">
+    <div class="card card-objava shadow" v-for="(objava, index) in objave" :key="objava.Post.id" @click="otvoriZatvoriModalObjava(objava)">
+      <img :src="BASE_URL + objava.Post.image_path" alt="Slika objave" class="card-img-top">
       <div class="card-body">
-        <p class="card-text">{{ objava.description }}</p>
-        <p class="card-price">{{ objava.price }} BAM</p>
+        <p class="card-text">{{ objava["Post"].description }}</p>
+        <p class="card-price">{{ objava["Post"].price }} $</p>
         <div class="card-rating">
           <div class="rating-wraper">
             <div class="ratings" @click.stop>
-              <span @click="setRating(index, 5)">&#9733;</span>
-              <span @click="setRating(index, 4)">&#9733;</span>
-              <span @click="setRating(index, 3)">&#9733;</span>
-              <span @click="setRating(index, 2)">&#9733;</span>
-              <span @click="setRating(index, 1)">&#9733;</span>
+              <span :class="{ 'colored-star': objava.Post.review == 5 && !objava.Post.isHovered}" 
+                @mouseover="handleMouseOver(objava)"
+                @mouseout="handleMouseOut(objava)" 
+                @click="setRating(objava.Post.id, 5)">&#9733;</span>
+              <span :class="{ 'colored-star': objava.Post.review >= 4 && !objava.Post.isHovered}" 
+                @mouseover="handleMouseOver(objava)"
+                @mouseout="handleMouseOut(objava)" 
+                @click="setRating(objava.Post.id, 4)">&#9733;</span>
+              <span :class="{ 'colored-star': objava.Post.review >= 3 && !objava.Post.isHovered}" 
+                @mouseover="handleMouseOver(objava)"
+                @mouseout="handleMouseOut(objava)" 
+                @click="setRating(objava.Post.id, 3)">&#9733;</span>
+              <span :class="{ 'colored-star': objava.Post.review >= 2 && !objava.Post.isHovered}" 
+                @mouseover="handleMouseOver(objava)"
+                @mouseout="handleMouseOut(objava)" 
+                @click="setRating(objava.Post.id, 2)">&#9733;</span>
+              <span :class="{ 'colored-star': objava.Post.review >= 1 && !objava.Post.isHovered}" 
+                @mouseover="handleMouseOver(objava)"
+                @mouseout="handleMouseOut(objava)" 
+                @click="setRating(objava.Post.id, 1)">&#9733;</span>
             </div>
           </div>
           <div class="card-rating-text">
-            <p class="card-rating-number text-warning fw-bold">{{ objava.review.toFixed(1) }}</p>
-            <p class="card-rating-reviews">{{ objava.num_reviews }} reviews</p>
+            <p class="card-rating-number text-warning fw-bold">{{ objava["Review"].toFixed(1) }}</p>
+            <p class="card-rating-reviews">{{ objava["Number of reviews"] }} reviews</p>
           </div>
         </div>
       </div>
     </div>
+  </div>
+  <div id="pagination-container">
+    <button id="prev-btn" @click="prevPage()">Previous</button>
+    <div id="page-num">Page: {{this.currentPage}}</div>
+    <button id="next-btn" @click="nextPage()">Next</button>
   </div>
 </template>
 
@@ -70,17 +91,15 @@
     return{
       objave: [],
       otvorenModalObjava: false,
-      objavePoUsluzi: [],
       objava: null,
-      objavePoCijeni: [],
-      objavePoOcjeni: [],
-      filtriraneObjave: this.objave,
-      filtriraneObjavePomocna: [],
-      filtriraneObjavePomocna2: [],
       usluge: [],
       ocjena: 0,
+      currentPage: 1,
+      totalPages: 5,
+      buttonsToShow: 5,
+      ocjene: [],
       userRole: 0,
-      odabranaUsluga: "",
+      odabranaUsluga: "0",
       donjaCijena: 0,
       gornjaCijena: 10000,
       BASE_URL: process.env.VUE_APP_BASE_URL,
@@ -94,40 +113,191 @@
     }
   },
   mounted() {
-    this.dohvacanjeObjava();
-    this.dohvacanjeUsluga();
+    if (localStorage.getItem("Time")){
+      if (parseInt(localStorage.getItem("Time")) < Date.now()-40000) {
+        this.currentPage = localStorage.setItem("page", "1");
+        localStorage.setItem("Time", String(Date.now()));
+        localStorage.setItem("Filtering", "0")
+      }
+    }else{
+      localStorage.setItem("Time", String(Date.now()));
+      localStorage.setItem("page", "1");
+    }
+    this.currentPage = localStorage.getItem('page')
+    if (parseInt(localStorage.getItem("Filtering")) != "1"){
+      localStorage.removeItem("Usluga")
+      localStorage.removeItem("Donja cijena")
+      localStorage.removeItem("Gornja cijena")
+      localStorage.removeItem("Ocjena")
+      this.dohvacanjeObjava(this.currentPage);
+    } else{
+      this.odabranaUsluga = localStorage.getItem("Usluga")
+      this.gornjaCijena = localStorage.getItem("Gornja cijena")
+      this.donjaCijena = localStorage.getItem("Donja cijena")
+      this.ocjena = localStorage.getItem("Ocjena")
+      this.primijeniFiltere(this.currentPage)
+    }
     this.dohvacanjeUsera();
+    this.dohvacanjeUsluga();
+    this.dohvacanjeOcjena();
   },
   methods: {
-    dohvacanjeObjava(){
-      api.get('/api/posts')
+    /*
+    dohvatiOcjene(){
+      const token = localStorage.getItem('token');
+      api.get('/review', {
+          headers: {
+              Authorization: `Bearer ${token}`
+          }
+          })
       .then(response => {
-        this.objave = response.data;
-        this.filtriraneObjave = response.data;
+        this.reviews = response.data;
+        console.log(response.data)
       })
       .catch(error => {
         console.error(error);
       });
     },
-    dohvacanjeRole(id){
-      const API_ENDPOINT = `/api/userroles/getRoleByUser/${id}`;
-      api.get(API_ENDPOINT)
+    */
+    dohvacanjeObjava(page){
+      const token = localStorage.getItem('token');
+      api.get(`/posts/?page=${page}`, {
+          headers: {
+              Authorization: `Bearer ${token}`
+          }
+          })
       .then(response => {
-        this.userRole = response.data[0].role_id;
+        this.objave = response.data;
       })
       .catch(error => {
         console.error(error);
       });
+    },
+    setRating(objavaIndex, rating) {
+      const payload = {"post_id": objavaIndex, "review": rating}
+      const token = localStorage.getItem('token');
+      api.post('/review', payload, {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+        },
+    })
+    .then(response => {
+        console.log("Uspješno ocjenjivanje!")
+        window.location.reload();
+        this.updatePageNumber();
+    })
+    .catch(error => {
+        // Handle login error
+        console.error(error.response.data.detail); // Use .detail for more specific error message
+    });
+    },
+    /*
+    updatePageNumber() {
+      const pageButtonsContainer = document.getElementById('page-buttons');
+      pageButtonsContainer.innerHTML = '';
+      const startPage = Math.max(1, this.currentPage - Math.floor(this.buttonsToShow / 2));
+      const endPage = Math.min(this.totalPages, startPage + this.buttonsToShow - 1);
+
+      for (let i = startPage; i <= endPage; i++) {
+        const button = document.createElement('button');
+        button.innerText = i;
+        button.onclick = () => this.goToPage(i);
+        if (i === currentPage) {
+          button.classList.add('active');
+        }
+        pageButtonsContainer.appendChild(button);
+      }
+      this.primijeniFiltere(this.currentPage);
+    },
+    */
+    updatePageNumber() {
+      document.getElementById('page-num').innerText = `Page: ${this.currentPage}`;
+      localStorage.setItem("page", this.currentPage);
+      localStorage.setItem("Filtering", "1")
+      localStorage.setItem("Usluga", String(this.odabranaUsluga))
+      localStorage.setItem("Donja cijena", String(this.donjaCijena))
+      localStorage.setItem("Gornja cijena", String(this.gornjaCijena))
+      localStorage.setItem("Ocjena", String(this.ocjena))
+      this.primijeniFiltere(this.currentPage);
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+        this.updatePageNumber();
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+        this.updatePageNumber();
+      }
+    },
+    /*
+    goToPage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+        this.updatePageButtons();
+      }
+    },
+    */
+    primijeniFiltere(page){
+      const endpoint = `/posts/filter?service_id=${this.odabranaUsluga}&min_price=${this.donjaCijena}&max_price=${this.gornjaCijena}&review=${this.ocjena}&page=${page}`
+      const token = localStorage.getItem('token');
+      api.get(endpoint, {
+          headers: {
+              Authorization: `Bearer ${token}`
+          }
+          })
+      .then(response => {
+        this.objave = response.data;
+        this.obojiZvijezdu();
+      })
+      .catch(error => {
+        console.log(error.response.detail)
+      });
+    },
+    obojiZvijezdu(){
+      for(let i=0;i<this.objave.length;i++){
+        for(let j=0;j<this.ocjene.length;j++){
+          if (this.objave[i].Post.id == this.ocjene[j].post_id){
+            this.objave[i].Post["review"] = this.ocjene[j].review;
+            this.objave[i].Post["isHovered"] = false;
+          }
+        }
+      }
+    },
+    resetirajFiltere(){
+      this.odabranaUsluga = "0";
+      this.donjaCijena = 0;
+      this.gornjaCijena = 10000;
+      this.ocjena = 0;
+      this.currentPage = 1;
+      this.updatePageNumber();
+      localStorage.setItem("Filtering", "0");
     },
     otvoriZatvoriModalObjava(objava){
       this.otvorenModalObjava = !this.otvorenModalObjava;
       this.objava = objava;
     },
+    dohvacanjeUsluga(){
+      api.get('/services')
+      .then(response => {
+        this.usluge = response.data;
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    },
     dohvacanjeUsera(){
       const token = localStorage.getItem('token');
-      console.log(token)
       if (token) {
-          api.get('/api/auth/user', {
+        const parts = token.split('.');
+        const payload = atob(parts[1]);
+        const payloadObject = JSON.parse(payload);
+        const userId = payloadObject.user_id;
+        const endpoint = 'users/' + userId
+          api.get(endpoint, {
           headers: {
               Authorization: `Bearer ${token}`
           }
@@ -135,13 +305,13 @@
           .then(response => {
           // Dobivene informacije o korisniku
             const korisnik = response.data;
-            this.Korisnik.ime = korisnik.first_name;
-            this.Korisnik.prezime = korisnik.last_name;
-            this.Korisnik.email = korisnik.email;
-            this.Korisnik.putanja = korisnik.image_path;
-            this.Korisnik.id = korisnik.id;
-            this.dohvacanjeObjava(korisnik.id);
-            this.dohvacanjeRole(korisnik.id)
+            console.log(korisnik)
+            this.Korisnik.ime = korisnik["User"].first_name;
+            this.Korisnik.prezime = korisnik["User"].last_name;
+            this.Korisnik.email = korisnik["User"].email;
+            this.Korisnik.putanja = korisnik["User"].image_path;
+            this.Korisnik.id = userId
+            this.userRole = korisnik["Role"].id
 
           // Ovdje možete spremiti informacije o korisniku u lokalno stanje ili
           // izvršiti druge akcije koje su vam potrebne
@@ -154,92 +324,30 @@
           this.$router.push('/error');
         }
       },
-    filtrirajPoUsluzi(service_id, ocjena, donjaCijena, gornjaCijena){
-      this.filtriraneObjavePomocna = [];
-      this.filtriraneObjavePomocna2 = [];
-      if(service_id){
-      
-        const API_ENDPOINT = `/api/posts/filterByService/${service_id}`;
-        api.get(API_ENDPOINT)
-        .then(response => {
-          this.objavePoUsluzi = response.data;
-        })
-        .catch(error => {
-          console.error(error);
-        });
-      }else{
-        this.objavePoUsluzi = this.objave;
-      }
-      const API_ENDPOINT2 = `/api/posts/filterByReview/${ocjena}`;
-      api.get(API_ENDPOINT2)
-        .then(response => {
-          this.objavePoOcjeni = response.data;
-          for(let i=0;i<this.objavePoUsluzi.length;i++){
-            for(let j=0;j<this.objavePoOcjeni.length;j++){
-              if(this.objavePoUsluzi[i].id == this.objavePoOcjeni[j].id){
-                this.filtriraneObjavePomocna.push(this.objavePoUsluzi[i]);
-              }
+      dohvacanjeOcjena(){
+        const endpoint = '/review'
+        const token = localStorage.getItem('token');
+        api.get(endpoint, {
+            headers: {
+                Authorization: `Bearer ${token}`
             }
-          }
-        })
-        .catch(error => {
-          console.error(error);
-        });
-        const API_ENDPOINT3 = `/api/posts/filterByPrice/${donjaCijena}/${gornjaCijena}`;
-        api.get(API_ENDPOINT3)
+            })
         .then(response => {
-          this.objavePoCijeni = response.data;
-          for(let i=0;i<this.filtriraneObjavePomocna.length;i++){
-            for(let j=0;j<this.objavePoCijeni.length;j++){
-              if(this.filtriraneObjavePomocna[i].id == this.objavePoCijeni[j].id){
-                this.filtriraneObjavePomocna2.push(this.filtriraneObjavePomocna[i]);
-              }
-            }
-          }
-          this.filtriraneObjave = this.filtriraneObjavePomocna2;
+          this.ocjene = response.data;
+          this.obojiZvijezdu();
         })
         .catch(error => {
-          console.error(error);
+          console.log(error.response.detail)
         });
-    },
-    primijeniFiltere(){
-      this.filtrirajPoUsluzi(this.odabranaUsluga, this.ocjena, this.donjaCijena, this.gornjaCijena)
-    },
-    dohvacanjeUsluga(){
-      api.get('/api/services')
-      .then(response => {
-        this.usluge = response.data;
-      })
-      .catch(error => {
-        console.error(error);
-      });
-    },
-    setRating(objavaIndex, rating) {
-      // Postavite ocjenu objave na temelju ratinga
-      // Možete koristiti API za spremanje ocjene u bazu ili druge akcije
-      const API_ENDPOINT = `/api/posts/${this.objave[objavaIndex].id}`;
-      let num_reviews = this.objave[objavaIndex].num_reviews;
-      let review = this.objave[objavaIndex].review;
-      review = ((review * num_reviews) + rating)/(num_reviews +1);
-      num_reviews = num_reviews + 1;
-      let novaObjava = {
-          "description": this.objave[objavaIndex].description,
-          "price": this.objave[objavaIndex].price,
-          "review": review,
-          "num_reviews": num_reviews,
+      },
+      handleMouseOver(objava) {
+      objava.Post.isHovered = true;
+      },
+      handleMouseOut(objava) {
+        objava.Post.isHovered = false;
       }
-      api.put(API_ENDPOINT, novaObjava)
-      .then(response => {
-        console.log("Uspješno");
-        this.dohvacanjeObjava();
-      })
-      .catch(error => {
-        // Greška pri čuvanju
-        console.error(error.response.data.message);
-      });
-      // Resetirajte highlightedStars nakon postavljanja ocjene
-      this.highlightedStars = 0;
-    },
+    
+    
   }
 }
 
@@ -295,6 +403,9 @@
 .ratings span:hover ~ span {
   color: orange;
 }
+.colored-star {
+  color: orange;
+}
 .card-rating-text {
   font-size: 1rem;
   color: gray;
@@ -313,6 +424,27 @@
 
 .filter-button {
   text-align: right;
+}
+
+#pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+#prev-btn,
+#next-btn,
+button {
+  background-color: #333;
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  cursor: pointer;
+  margin: 0 5px;
+}
+
+button.active {
+  background-color: #555;
 }
 
 .range-value {

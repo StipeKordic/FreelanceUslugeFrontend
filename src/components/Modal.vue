@@ -1,10 +1,10 @@
 <template>
   <div class="backdrop" @click.self="zatvoriModal">
     <div class="modall">
-        <h3>Prijavi se</h3>
+        <h3>Log in</h3>
         <form @submit.prevent="submitForm" enctype="multipart/form-data">
             <div class="mb-3">
-                <label for="email" class="form-label">Email:</label>
+                <label for="email" class="form-label">E-mail:</label>
                 <input type="email" id="email" v-model="formData.email" class="form-control" required>
             </div>
             <div class="mb-3">
@@ -16,14 +16,14 @@
                 </button>
               </div>
             </div>
-            <button type="submit" class="btn btn-dark mb-3">Prijavi se</button>
+            <button type="submit" class="btn btn-dark mb-3">Log in</button>
         </form>
         <div class="d-flex justify-content-between">
-            <p>Nemate račun?</p>
-            <a href="#" class="text-decoration-none text-dark">Zaboravljena lozinka?</a>
+            <p>You don't have an account?</p>
+            <a href="#" class="text-decoration-none text-dark">Forgot password?</a>
         </div>
         <div class="text-start">
-            <router-link to="/register" class="p-1 text-decoration-none text-dark border border-dark rounded">Registriraj se</router-link>
+            <router-link to="/register" class="p-1 text-decoration-none text-dark border border-dark rounded">Sign up</router-link>
         </div>
     </div>
   </div>

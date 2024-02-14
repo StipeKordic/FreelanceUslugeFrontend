@@ -1,6 +1,6 @@
 <template>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <router-link to="/" class="navbar-brand logo custom-logo">Freelance Usluge</router-link>
+      <router-link to="/" class="navbar-brand logo custom-logo">Freelance Services</router-link>
       
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
               aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -10,16 +10,10 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <router-link to="/about" class="nav-link">O nama</router-link>
+            <button class="nav-link btn custom-btn btn-outline-light" @click="otvoriModal">Log in</button>
           </li>
           <li class="nav-item">
-            <a href="/Dokumenti/VIZIJA_PZI.docx.pdf" class="nav-link" target="_blank">Vizija</a>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link btn custom-btn btn-outline-light" @click="otvoriModal">Prijavi se</button>
-          </li>
-          <li class="nav-item">
-            <router-link to="/register" class="btn custom-register-btn" >Registriraj se</router-link>
+            <router-link to="/register" class="btn custom-register-btn" >Sign up</router-link>
           </li>
         </ul>
       </div>

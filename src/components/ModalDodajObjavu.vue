@@ -1,28 +1,28 @@
 <template>
     <div class="backdrop" @click.self="zatvoriModal">
       <div class="modall">
-          <h3>Dodaj objavu</h3>
+          <h3>Add post</h3>
           <form @submit.prevent="submitForm" enctype="multipart/form-data">
               <div class="mb-3">
-                <label for="service">Usluga:</label>
+                <label for="service">Service:</label>
                     <select id="service" v-model="formData.service_id" class="form-control">
-                        <option value="">Odaberi uslugu</option>
-                        <option v-for="service in services" :key="service.id" :value="service.id">{{ service.name }}</option>
+                        <option value="">Choose service</option>
+                        <option v-for="service in services" :key="service.Service.id" :value="service.Service.id">{{ service.Service.name }}</option>
                     </select>
               </div>
               <div class="mb-3">
-                <label for="price">Cijena:</label>
+                <label for="price">Price:</label>
                 <input type="number" id="price" v-model="formData.price" class="form-control" required>
               </div>
               <div class="mb-3">
-                <label for="description">Opis:</label>
+                <label for="description">Description:</label>
                 <textarea id="description" v-model="formData.description" class="form-control" required></textarea>
               </div>
               <div class="mb-3">
-                <label for="image">Slika:</label>
+                <label for="image">Image:</label>
                 <input type="file" id="image" @change="handleImageUpload" accept="image/*" class="form-control">
               </div>
-              <button type="submit" class="btn btn-dark mb-3">Dodaj</button>
+              <button type="submit" class="btn btn-dark mb-3">Submit</button>
           </form>
       </div>
     </div>
@@ -57,20 +57,20 @@
               const formData = new FormData();
 
               // Dodajemo polja forme u FormData objekat
-              formData.append('user_id', this.formData.user_id);
               formData.append('service_id', this.formData.service_id);
               formData.append('price', this.formData.price);
               formData.append('description', this.formData.description);
               if (this.formData.image) {
-                formData.append('image_path', this.formData.image);
+                formData.append('file', this.formData.image);
               }
               // Definišemo API endpoint
-              const API_ENDPOINT = '/api/posts';
-
+              const API_ENDPOINT = '/posts';
+              const token = localStorage.getItem('token');
               // Slanje POST zahteva na backend
               api.post(API_ENDPOINT, formData, {
                 headers: {
                   'Content-Type': 'multipart/form-data', // Ovo je važno kada šaljete sliku
+                  Authorization: `Bearer ${token}`
                 },
               })
               .then(response => {
@@ -87,7 +87,7 @@
           },
 
   mounted() {
-    api.get('/api/services')
+    api.get('/services')
       .then(response => {
         this.services = response.data;
       })
